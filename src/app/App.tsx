@@ -101,33 +101,32 @@ function QueryForm() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSending(true);
-    setError("");
+  e.preventDefault();
+  setSending(true);
+  setError("");
 
-    try {
-      const response = await fetch("ttps://formspree.io/f/xbgrkrwe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json"
-        },
-        body: JSON.stringify(form)
-      });
+  try {
+    const response = await fetch("https://formspree.io/f/xbgrkrwe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify(form)
+    });
 
-      if (response.ok) {
-        setSubmitted(true);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
-    } catch {
-      setError("Unable to send your enquiry. Please try again.");
-    } finally {
-      setSending(false);
+    if (response.ok) {
+      setSubmitted(true);
+    } else {
+      setError("Something went wrong. Please try again.");
     }
-  };
+  } catch {
+    setError("Unable to send your enquiry. Please try again.");
+  } finally {
+    setSending(false);
+  }
+};
 
   if (submitted) {
     return (
