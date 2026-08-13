@@ -1,3 +1,4 @@
+//https://formspree.io/f/xbgrkrwe
 import { useState } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import realProperty from "@/imports/Screenshot_2026-07-31_at_11.27.01_PM.png";
@@ -84,13 +85,49 @@ function Bullet({ text }: { text: string }) {
     </li>
   );
 }
-
-/* ─── Query Form ─────────────────────────────────────────────── */
+/*Query Form*/
 function QueryForm() {
   const [form, setForm] = useState({
-    name: "", email: "", phone: "", checkin: "", checkout: "", guests: "2", interest: "", message: ""
+    name: "",
+    email: "",
+    phone: "",
+    checkin: "",
+    checkout: "",
+    guests: "2",
+    interest: "",
+    message: ""
   });
+
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSending(true);
+    setError("");
+
+    try {
+      const response = await fetch("ttps://formspree.io/f/xbgrkrwe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify(form)
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Unable to send your enquiry. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
 
   if (submitted) {
     return (
@@ -98,7 +135,11 @@ function QueryForm() {
         <div className="w-16 h-16 rounded-full border-2 border-[#c9a84c] flex items-center justify-center mx-auto mb-6">
           <Send size={24} className="text-[#c9a84c]" />
         </div>
-        <p className="font-['Cinzel'] text-[#c9a84c] text-sm tracking-widest mb-3">QUERY RECEIVED</p>
+
+        <p className="font-['Cinzel'] text-[#c9a84c] text-sm tracking-widest mb-3">
+          QUERY RECEIVED
+        </p>
+
         <p className="font-['Cormorant_Garamond'] italic text-[#f5e6c8]/70 text-lg">
           Thank you, {form.name || "dear guest"}. Our concierge team will be in touch within 24 hours.
         </p>
@@ -106,73 +147,160 @@ function QueryForm() {
     );
   }
 
-  const inp = "w-full bg-[#1a3020] border border-[#c9a84c]/30 text-[#f5e6c8] px-4 py-3 text-sm font-['Lato'] focus:outline-none focus:border-[#c9a84c] transition-colors placeholder:text-[#f5e6c8]/25";
-  const lbl = "block font-['Cinzel'] text-[#c9a84c] text-[10px] tracking-[0.2em] uppercase mb-2";
+  const inp =
+    "w-full bg-[#1a3020] border border-[#c9a84c]/30 text-[#f5e6c8] px-4 py-3 text-sm font-['Lato'] focus:outline-none focus:border-[#c9a84c] transition-colors placeholder:text-[#f5e6c8]/25";
+
+  const lbl =
+    "block font-['Cinzel'] text-[#c9a84c] text-[10px] tracking-[0.2em] uppercase mb-2";
 
   return (
-    <form onSubmit={e => { e.preventDefault(); setSubmitted(true); }} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label className={lbl}>Full Name *</label>
-          <input type="text" required placeholder="Your name" className={inp}
-            value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+          <input
+            type="text"
+            name="name"
+            required
+            placeholder="Your name"
+            className={inp}
+            value={form.name}
+            onChange={e => setForm({ ...form, name: e.target.value })}
+          />
         </div>
+
         <div>
           <label className={lbl}>Email Address *</label>
-          <input type="email" required placeholder="your@email.com" className={inp}
-            value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="your@email.com"
+            className={inp}
+            value={form.email}
+            onChange={e => setForm({ ...form, email: e.target.value })}
+          />
         </div>
       </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label className={lbl}>Phone</label>
-          <input type="tel" placeholder="+91 XXXXX XXXXX" className={inp}
-            value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+          <input
+            type="tel"
+            name="phone"
+            placeholder="+91 XXXXX XXXXX"
+            className={inp}
+            value={form.phone}
+            onChange={e => setForm({ ...form, phone: e.target.value })}
+          />
         </div>
+
         <div>
           <label className={lbl}>Nature of Interest</label>
-          <select className={inp} value={form.interest} onChange={e => setForm({ ...form, interest: e.target.value })}>
-            <option value="" className="bg-[#1a3020]">Select an option</option>
-            {["Heritage Room Stay","Private House Exclusive","Private Dining","Cultural Experience","Corporate Retreat","Private Event","Film / Photography","Eden Circle Membership"].map(o => (
-              <option key={o} value={o} className="bg-[#1a3020]">{o}</option>
+          <select
+            name="interest"
+            className={inp}
+            value={form.interest}
+            onChange={e => setForm({ ...form, interest: e.target.value })}
+          >
+            <option value="" className="bg-[#1a3020]">
+              Select an option
+            </option>
+
+            {[
+              "Heritage Room Stay",
+              "Private House Exclusive",
+              "Private Dining",
+              "Cultural Experience",
+              "Corporate Retreat",
+              "Private Event",
+              "Film / Photography",
+              "Eden Circle Membership"
+            ].map(o => (
+              <option key={o} value={o} className="bg-[#1a3020]">
+                {o}
+              </option>
             ))}
           </select>
         </div>
       </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div>
           <label className={lbl}>Check-In</label>
-          <input type="date" className={inp} style={{ colorScheme: "dark" }}
-            value={form.checkin} onChange={e => setForm({ ...form, checkin: e.target.value })} />
+          <input
+            type="date"
+            name="checkin"
+            className={inp}
+            style={{ colorScheme: "dark" }}
+            value={form.checkin}
+            onChange={e => setForm({ ...form, checkin: e.target.value })}
+          />
         </div>
+
         <div>
           <label className={lbl}>Check-Out</label>
-          <input type="date" className={inp} style={{ colorScheme: "dark" }}
-            value={form.checkout} onChange={e => setForm({ ...form, checkout: e.target.value })} />
+          <input
+            type="date"
+            name="checkout"
+            className={inp}
+            style={{ colorScheme: "dark" }}
+            value={form.checkout}
+            onChange={e => setForm({ ...form, checkout: e.target.value })}
+          />
         </div>
+
         <div>
           <label className={lbl}>Guests</label>
-          <select className={inp} value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })}>
-            {[1,2,3,4,5,6,7,8].map(n => (
-              <option key={n} value={n} className="bg-[#1a3020]">{n} Guest{n > 1 ? "s" : ""}</option>
+          <select
+            name="guests"
+            className={inp}
+            value={form.guests}
+            onChange={e => setForm({ ...form, guests: e.target.value })}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
+              <option key={n} value={n} className="bg-[#1a3020]">
+                {n} Guest{n > 1 ? "s" : ""}
+              </option>
             ))}
           </select>
         </div>
       </div>
+
       <div>
         <label className={lbl}>Your Query or Special Requests</label>
-        <textarea rows={3} className={`${inp} resize-none`}
+
+        <textarea
+          name="message"
+          rows={3}
+          className={`${inp} resize-none`}
           placeholder="Tell us about your occasion, dietary requirements, preferred dates, or experiences you'd like to explore."
-          value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
+          value={form.message}
+          onChange={e => setForm({ ...form, message: e.target.value })}
+        />
       </div>
+
+      {error && (
+        <p className="text-red-400 text-sm text-center">
+          {error}
+        </p>
+      )}
+
       <div className="pt-1 text-center">
-        <GoldBtn type="submit">Send Enquiry</GoldBtn>
-        <p className="font-['Lato'] text-[#f5e6c8]/30 text-xs mt-3">Our concierge team responds within 24 hours.</p>
+        <GoldBtn type="submit">
+          {sending ? "Sending..." : "Send Enquiry"}
+        </GoldBtn>
+
+        <p className="font-['Lato'] text-[#f5e6c8]/30 text-xs mt-3">
+          Our concierge team responds within 24 hours.
+        </p>
       </div>
+
     </form>
   );
 }
-
 /* ─── Modal ──────────────────────────────────────────────────── */
 function Modal({ title, sub, onClose }: { title: string; sub: string; onClose: () => void }) {
   return (
@@ -694,3 +822,4 @@ export default function App() {
     </div>
   );
 }
+
